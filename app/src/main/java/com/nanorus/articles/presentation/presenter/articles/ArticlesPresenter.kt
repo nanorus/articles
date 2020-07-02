@@ -4,7 +4,9 @@ import com.nanorus.articles.entity.Article
 import com.nanorus.articles.model.domain.articles.ArticlesInteractor
 import com.nanorus.articles.presentation.ui.Toaster
 import com.nanorus.articles.presentation.view.articles.IArticlesView
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
 
@@ -21,24 +23,29 @@ class ArticlesPresenter : MvpPresenter<IArticlesView>() {
     }
 
     fun onRefresh() {
-        if (!isTopicsLoading) {
-            isTopicsLoading = true
-            viewState.showProgress(true)
-            getArticles()
-        }
+        getArticles()
     }
 
     private fun getArticles() {
-        articlesListener = interactor.getArticles().subscribe({ article ->
-            articles.add(article)
-        }, {
-            viewState.showProgress(false)
-            isTopicsLoading = false
-            Toaster.toast(it.message ?: "Loading articles error")
-        }, {
-            viewState.showProgress(false)
-            isTopicsLoading = false
-            viewState.showArticles(articles)
-        })
+        if (!isTopicsLoading) {
+            isTopicsLoading = true
+            viewState.showProgress(true)
+            articles.clear()
+            articlesListener = interactor.getArticles()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ article ->
+                    articles.add(article)
+                }, {
+                    viewState.showProgress(false)
+                    isTopicsLoading = false
+                    Toaster.toast(it.message ?: "Loading articles error")
+                }, {
+                    viewState.showProgress(false)
+                    isTopicsLoading = false
+                    articles.sortByDescending { it.date }
+                    viewState.showArticles(articles)
+                })
+        }
     }
 }
