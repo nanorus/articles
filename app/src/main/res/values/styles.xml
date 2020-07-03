@@ -14,6 +14,12 @@
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
+    <style name="ArticleListError">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
 
     <style name="ArticleDescription">
         <item name="android:fontFamily">@font/roboto_regular</item>

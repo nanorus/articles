@@ -5,6 +5,6 @@ import moxy.MvpView
 
 interface IArticlesView : MvpView {
     fun showArticles(articles: MutableList<Article>)
-
     fun showProgress(show: Boolean)
+    fun showNoInternetError(show: Boolean)
 }

@@ -1,6 +1,7 @@
 package com.nanorus.articles.presentation.view.articles
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nanorus.articles.R
 import com.nanorus.articles.entity.Article
@@ -41,7 +42,11 @@ class ArticlesActivity : MvpAppCompatActivity(), IArticlesView {
     }
 
     override fun showProgress(show: Boolean) {
-        toast(show.toString())
         swipe.post { swipe.isRefreshing = show }
+    }
+
+    override fun showNoInternetError(show: Boolean) {
+        error.isVisible = show
+        articlesList.isVisible = !show
     }
 }

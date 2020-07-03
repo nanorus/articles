@@ -1,6 +1,7 @@
 package com.nanorus.articles.presentation.presenter.articles
 
 import com.nanorus.articles.entity.Article
+import com.nanorus.articles.entity.ErrorEntity
 import com.nanorus.articles.model.domain.articles.ArticlesInteractor
 import com.nanorus.articles.presentation.ui.Toaster
 import com.nanorus.articles.presentation.view.articles.IArticlesView
@@ -39,8 +40,14 @@ class ArticlesPresenter : MvpPresenter<IArticlesView>() {
                 }, {
                     viewState.showProgress(false)
                     isTopicsLoading = false
-                    Toaster.toast(it.message ?: "Loading articles error")
+                    when (it) {
+                        is ErrorEntity.NoInternetException -> {
+                            viewState.showNoInternetError(true)
+                        }
+                        else -> Toaster.toast(it.message ?: "Loading articles error")
+                    }
                 }, {
+                    viewState.showNoInternetError(false)
                     viewState.showProgress(false)
                     isTopicsLoading = false
                     articles.sortByDescending { it.date }
